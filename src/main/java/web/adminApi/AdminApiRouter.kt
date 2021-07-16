@@ -1,4 +1,4 @@
-package web.adminApiWeb
+package web.adminApi
 
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router

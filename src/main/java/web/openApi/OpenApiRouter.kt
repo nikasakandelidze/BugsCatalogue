@@ -1,4 +1,4 @@
-package web.openApiWeb
+package web.openApi
 
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router

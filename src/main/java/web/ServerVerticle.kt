@@ -3,13 +3,15 @@ package web
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Promise
 import io.vertx.ext.web.Router
-import web.adminApiWeb.AdminApiRouter
-import web.openApiWeb.OpenApiRouter
+import web.adminApi.AdminApiRouter
+import web.openApi.OpenApiRouter
+import web.userApi.UserApiRouter
 
 class ServerVerticle : AbstractVerticle() {
 
     private val openApiRouter: OpenApiRouter = OpenApiRouter()
     private val adminApiRouter: AdminApiRouter = AdminApiRouter()
+    private val userApiRouter: UserApiRouter = UserApiRouter()
 
     override fun start(startPromise: Promise<Void>?) {
         val httpServer = vertx.createHttpServer()
@@ -23,6 +25,7 @@ class ServerVerticle : AbstractVerticle() {
         val rootRouter = Router.router(vertx)
         rootRouter.mountSubRouter("/open-api", openApiRouter.getRouter(vertx))
         rootRouter.mountSubRouter("/admin-api", adminApiRouter.getRouter(vertx))
+        rootRouter.mountSubRouter("/user-api", userApiRouter.getRouter(vertx))
         return rootRouter
     }
 }
