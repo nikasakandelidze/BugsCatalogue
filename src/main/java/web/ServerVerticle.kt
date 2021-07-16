@@ -3,27 +3,26 @@ package web
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Promise
 import io.vertx.ext.web.Router
-import org.apache.log4j.Logger
+import web.adminApiWeb.AdminApiRouter
+import web.openApiWeb.OpenApiRouter
 
 class ServerVerticle : AbstractVerticle() {
-    private val LOGGER = Logger.getLogger(ServerVerticle::class.java)
+
+    private val openApiRouter: OpenApiRouter = OpenApiRouter()
+    private val adminApiRouter: AdminApiRouter = AdminApiRouter()
 
     override fun start(startPromise: Promise<Void>?) {
         val httpServer = vertx.createHttpServer()
         val port = 8080
-        httpServer.requestHandler(setupRouter())
+        httpServer.requestHandler(setupRootRouter())
             .listen(port)
         super.start(startPromise)
-        LOGGER.info("Started HTTP Server on port ${port}")
     }
 
-    private fun setupRouter(): Router {
+    private fun setupRootRouter(): Router {
         val rootRouter = Router.router(vertx)
-        rootRouter.route("/hi").handler {
-            val response = it.response()
-            LOGGER.info("Recieved request in vertx")
-            response.end("Hi from vertx!")
-        }
+        rootRouter.mountSubRouter("/open-api", openApiRouter.getRouter(vertx))
+        rootRouter.mountSubRouter("/admin-api", adminApiRouter.getRouter(vertx))
         return rootRouter
     }
 }
