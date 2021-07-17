@@ -9,6 +9,7 @@ import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.kotlin.core.json.json
 import web.dto.BugsFilterRequest
 import web.openApi.validator.OpenApiRequestValidator
 import web.utils.ResponseUtils
@@ -22,7 +23,7 @@ class OpenApiRouter(val openApiRequestValidator: OpenApiRequestValidator, val ve
         openApiRouter.get("/login")
             .handler(this::handleLoginRequest)
         openApiRouter.get("/bugs-filter")
-            .handler(this::handleListBugsRequest)
+            .handler { handleListBugsRequest(it) }
         return openApiRouter
     }
 
@@ -33,9 +34,8 @@ class OpenApiRouter(val openApiRequestValidator: OpenApiRequestValidator, val ve
         if (result.isValid) {
             vertx.eventBus().request<JsonObject>(
                 OpenApiVerticleAddress.listBugsAddress,
-                JsonObject.mapFrom(dto),
-                this::handleResponse
-            )
+                JsonObject.mapFrom(dto)
+            ) { handleResponse(it, routingContext) }
         } else {
             ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
         }
@@ -45,7 +45,18 @@ class OpenApiRouter(val openApiRequestValidator: OpenApiRequestValidator, val ve
         routingContext.end("login endpoint!")
     }
 
-    private fun handleResponse(result: AsyncResult<Message<JsonObject>>) {
-
+    private fun handleResponse(result: AsyncResult<Message<JsonObject>>, routingContext: RoutingContext) {
+        if (result.succeeded()) {
+            val body = result.result().body()
+            val response = body.getJsonArray("bugs")
+            routingContext.response()
+                .setStatusCode(200)
+                .end(json { response }.toString())
+        } else {
+            ResponseUtils.respondWithServersideProblem(
+                routingContext.response(),
+                mutableSetOf(result.cause().message.orEmpty())
+            )
+        }
     }
 }

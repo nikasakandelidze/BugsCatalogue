@@ -6,6 +6,6 @@ import web.dto.BugsFilterRequest
 
 class OpenApiMessageValidator {
     fun validateOpenApiMessage(message: BugsFilterRequest): ValidationResult {
-        return ValidationResult(false, mutableSetOf())
+        return ValidationResult(true, mutableSetOf())
     }
 }
