@@ -1,3 +1,5 @@
 package domain
 
-data class Bug(val id: String, val title: String, val content: String,val user: User)
+class Bug(var id: String, var title: String, var content: String,var user: User) {
+
+}

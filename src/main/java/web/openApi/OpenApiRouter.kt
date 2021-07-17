@@ -28,16 +28,18 @@ class OpenApiRouter(val openApiRequestValidator: OpenApiRequestValidator, val ve
     }
 
     private fun handleListBugsRequest(routingContext: RoutingContext) {
-        val requestBody = routingContext.bodyAsJson
-        val dto = requestBody.mapTo(BugsFilterRequest::class.java)
-        val result = openApiRequestValidator.validateBugsListRequest(dto)
-        if (result.isValid) {
-            vertx.eventBus().request<JsonObject>(
-                OpenApiVerticleAddress.listBugsAddress,
-                JsonObject.mapFrom(dto)
-            ) { handleResponse(it, routingContext) }
-        } else {
-            ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
+        val requestBody: JsonObject? = routingContext.bodyAsJson
+        requestBody?.let {
+            val dto = it.mapTo(BugsFilterRequest::class.java)
+            val result = openApiRequestValidator.validateBugsListRequest(dto)
+            if (result.isValid) {
+                vertx.eventBus().request<JsonObject>(
+                    OpenApiVerticleAddress.listBugsAddress,
+                    JsonObject.mapFrom(dto)
+                ) { handleResponse(it, routingContext) }
+            } else {
+                ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
+            }
         }
     }
 

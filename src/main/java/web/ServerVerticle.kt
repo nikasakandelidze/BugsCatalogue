@@ -34,8 +34,8 @@ class ServerVerticle : AbstractVerticle() {
     private fun setupRootRouter(): Router {
         val rootRouter = Router.router(vertx)
         rootRouter.route()
+            .handler(BodyHandler.create())
             .handler { RequestUtils.validateRequest(it) }
-            .handler { BodyHandler.create() }
         rootRouter.mountSubRouter("/open-api", openApiRouter.getRouter(vertx))
         rootRouter.mountSubRouter("/admin-api", adminApiRouter.getRouter(vertx))
         rootRouter.mountSubRouter("/user-api", userApiRouter.getRouter(vertx))
