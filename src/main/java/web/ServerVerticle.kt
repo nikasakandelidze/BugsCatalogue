@@ -5,11 +5,12 @@ import io.vertx.core.Promise
 import io.vertx.ext.web.Router
 import web.adminApi.AdminApiRouter
 import web.openApi.OpenApiRouter
+import web.openApi.validator.OpenApiRequestValidator
 import web.userApi.UserApiRouter
 
 class ServerVerticle : AbstractVerticle() {
 
-    private val openApiRouter: OpenApiRouter = OpenApiRouter()
+    private val openApiRouter: OpenApiRouter = OpenApiRouter(OpenApiRequestValidator(), vertx)
     private val adminApiRouter: AdminApiRouter = AdminApiRouter()
     private val userApiRouter: UserApiRouter = UserApiRouter()
 
