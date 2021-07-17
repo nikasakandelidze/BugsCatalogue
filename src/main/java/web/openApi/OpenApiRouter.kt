@@ -11,6 +11,10 @@ class OpenApiRouter {
             .handler {
                 it.end("login endpoint!")
             }
+        openApiRouter.get("/list-bugs")
+            .handler {
+
+            }
         return openApiRouter
     }
 }
