@@ -8,36 +8,32 @@ import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.json.json
 import org.apache.log4j.LogManager
 import dispatcher.openApi.validator.OpenApiMessageValidator
-import storage.message.IMessageStorage
-import web.dto.SendMessageRequest
+import domain.Question
+import storage.topics.TopicStorage
+import web.dto.MessageRequest
 import java.lang.Exception
+import java.util.*
 
 class OpenApiMessageDispatcherVerticle(
-    val openApiServiceMessageValidator: OpenApiMessageValidator,
-    val messageStorage: IMessageStorage
+    private val openApiServiceMessageValidator: OpenApiMessageValidator,
+    private val topicStorage: TopicStorage
 ) :
     AbstractVerticle() {
     val logger = LogManager.getLogger(OpenApiMessageDispatcherVerticle::class.java)
 
     override fun start(startPromise: Promise<Void>?) {
-        vertx.eventBus().consumer(OpenApiVerticleAddress.messageDispatcher, this::handleMessageDispatch)
+        vertx.eventBus().consumer(OpenApiVerticleAddress.questionsDispatcher, this::handleMessageDispatch)
         super.start(startPromise)
     }
 
     private fun handleMessageDispatch(message: Message<JsonObject>) {
         try {
-            val body = message.body().mapTo(SendMessageRequest::class.java)
+            val body: MessageRequest = message.body().mapTo(MessageRequest::class.java)
             val validationResult = openApiServiceMessageValidator.validateOpenApiMessage(body)
             if (validationResult.isValid) {
-                val bugs =
-                    messageStorage.addUnauthorizedMessageToTopic(
-                        domain.Message(
-                            body.title!!,
-                            body.content!!,
-                            body.topic!!
-                        )
-                    )
-                message.reply(json { bugs })
+                val question = Question(UUID.randomUUID().toString(), body.email!!, body.title!!, body.content!!, true)
+                topicStorage.addQuestionToTopic(question, body.topicId!!)
+                message.reply(json { question })
             } else {
                 message.reply(JsonObject.mapFrom(validationResult))
             }

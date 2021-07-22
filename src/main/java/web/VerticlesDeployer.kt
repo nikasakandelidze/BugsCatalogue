@@ -1,12 +1,15 @@
 package web
 
-import io.vertx.core.Vertx
+import dispatcher.openApi.OpenApiMessageAggregatorVerticle
 import dispatcher.openApi.OpenApiMessageDispatcherVerticle
 import dispatcher.openApi.validator.OpenApiMessageValidator
-import storage.message.MessageStorage
+import io.vertx.core.Vertx
+import storage.topics.TopicStorage
 
 fun main(args: Array<String>) {
     val vertx = Vertx.vertx();
     vertx.deployVerticle(ServerVerticle())
-    vertx.deployVerticle(OpenApiMessageDispatcherVerticle(OpenApiMessageValidator(), MessageStorage()))
+    val topicStorage = TopicStorage()
+    vertx.deployVerticle(OpenApiMessageDispatcherVerticle(OpenApiMessageValidator(), topicStorage))
+    vertx.deployVerticle(OpenApiMessageAggregatorVerticle(topicStorage))
 }

@@ -1,12 +1,15 @@
 package web.openApi.validator
 
 import common.validator.ValidationResult
-import web.dto.SendMessageRequest
+import web.dto.MessageRequest
 
 class OpenApiRequestValidator {
-    fun validateBugsListRequest(sendMessageRequest: SendMessageRequest): ValidationResult {
-        if (sendMessageRequest.content == null && sendMessageRequest.title == null && sendMessageRequest.topic == null) {
-            return ValidationResult(false, mutableSetOf("All fields: [content, title, topic] can't be empty."))
+    fun validateBugsListRequest(messageRequest: MessageRequest): ValidationResult {
+        if (messageRequest.content == null || messageRequest.title == null || messageRequest.topicId == null || messageRequest.email == null) {
+            return ValidationResult(
+                false,
+                mutableSetOf("All fields: [content, title, topicId, email] must be specified.")
+            )
         } else {
             return ValidationResult(true, mutableSetOf())
         }

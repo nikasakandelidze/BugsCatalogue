@@ -2,6 +2,7 @@ package common.eventbus
 
 class OpenApiVerticleAddress {
     companion object {
-        val messageDispatcher: String = "openapi.list.bugs"
+        val questionsDispatcher: String = "openapi.dispatch.question"
+        val questionsAggregator: String = "openapi.fetch.question"
     }
 }

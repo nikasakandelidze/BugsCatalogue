@@ -1,4 +1,8 @@
 package domain
 
-class Topic(id: String, title: String, description: String) {
-}
+class Topic(
+    val id: String? = "",
+    val title: String? = "",
+    val description: String? = "",
+    val questions: MutableList<Question>? = mutableListOf()
+)
