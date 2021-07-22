@@ -1,12 +1,12 @@
 package web.openApi.validator
 
 import common.validator.ValidationResult
-import web.dto.BugsFilterRequest
+import web.dto.SendMessageRequest
 
 class OpenApiRequestValidator {
-    fun validateBugsListRequest(bugsFilterRequest: BugsFilterRequest): ValidationResult {
-        if (bugsFilterRequest.content == null && bugsFilterRequest.title == null && bugsFilterRequest.userId == null && bugsFilterRequest.id == null) {
-            return ValidationResult(false, mutableSetOf("All fields: [content, title, userId, id] can't be null"))
+    fun validateBugsListRequest(sendMessageRequest: SendMessageRequest): ValidationResult {
+        if (sendMessageRequest.content == null && sendMessageRequest.title == null && sendMessageRequest.topic == null) {
+            return ValidationResult(false, mutableSetOf("All fields: [content, title, topic] can't be empty."))
         } else {
             return ValidationResult(true, mutableSetOf())
         }

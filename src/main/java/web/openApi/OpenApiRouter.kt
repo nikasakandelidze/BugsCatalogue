@@ -2,18 +2,15 @@ package web.openApi
 
 import common.eventbus.OpenApiVerticleAddress
 import io.vertx.core.AsyncResult
-import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.Message
-import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.core.json.json
-import web.dto.BugsFilterRequest
+import web.dto.SendMessageRequest
 import web.openApi.validator.OpenApiRequestValidator
 import web.utils.ResponseUtils
-import java.net.http.HttpResponse
 
 class OpenApiRouter(val openApiRequestValidator: OpenApiRequestValidator, val vertx: Vertx) {
 
@@ -22,19 +19,19 @@ class OpenApiRouter(val openApiRequestValidator: OpenApiRequestValidator, val ve
         val openApiRouter = Router.router(vertx)
         openApiRouter.get("/login")
             .handler(this::handleLoginRequest)
-        openApiRouter.get("/bugs-filter")
-            .handler { handleListBugsRequest(it) }
+        openApiRouter.get("/send-message")
+            .handler { handSendMessageRequest(it) }
         return openApiRouter
     }
 
-    private fun handleListBugsRequest(routingContext: RoutingContext) {
+    private fun handSendMessageRequest(routingContext: RoutingContext) {
         val requestBody: JsonObject? = routingContext.bodyAsJson
         requestBody?.let {
-            val dto = it.mapTo(BugsFilterRequest::class.java)
+            val dto = it.mapTo(SendMessageRequest::class.java)
             val result = openApiRequestValidator.validateBugsListRequest(dto)
             if (result.isValid) {
                 vertx.eventBus().request<JsonObject>(
-                    OpenApiVerticleAddress.listBugsAddress,
+                    OpenApiVerticleAddress.messageDispatcher,
                     JsonObject.mapFrom(dto)
                 ) { handleResponse(it, routingContext) }
             } else {
@@ -44,7 +41,10 @@ class OpenApiRouter(val openApiRequestValidator: OpenApiRequestValidator, val ve
     }
 
     private fun handleLoginRequest(routingContext: RoutingContext) {
-        routingContext.end("login endpoint!")
+        vertx.executeBlocking<JsonObject> {
+            Thread.sleep(500)
+            routingContext.end("login endpoint!")
+        }
     }
 
     private fun handleResponse(result: AsyncResult<Message<JsonObject>>, routingContext: RoutingContext) {
