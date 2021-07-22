@@ -33,7 +33,7 @@ class OpenApiMessageDispatcherVerticle(
             if (validationResult.isValid) {
                 val question = Question(UUID.randomUUID().toString(), body.email!!, body.title!!, body.content!!, true)
                 topicStorage.addQuestionToTopic(question, body.topicId!!)
-                message.reply(json { question })
+                message.reply(json { JsonObject.mapFrom(question) })
             } else {
                 message.reply(JsonObject.mapFrom(validationResult))
             }

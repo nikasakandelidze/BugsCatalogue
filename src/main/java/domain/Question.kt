@@ -1,4 +1,4 @@
 package domain
 
-class Question(id: String? = "", from: String? = "", title: String? ="", content: String? = "", isActive: Boolean? = false) {
+class Question(val id: String? = "",val from: String? = "",val title: String? ="",val content: String? = "",val isActive: Boolean? = false) {
 }
