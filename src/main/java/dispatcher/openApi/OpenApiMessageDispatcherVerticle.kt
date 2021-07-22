@@ -29,7 +29,14 @@ class OpenApiMessageDispatcherVerticle(
             val body = message.body().mapTo(SendMessageRequest::class.java)
             val validationResult = openApiServiceMessageValidator.validateOpenApiMessage(body)
             if (validationResult.isValid) {
-                val bugs = messageStorage.addUnauthorizedMessageToTopic(domain.Message())
+                val bugs =
+                    messageStorage.addUnauthorizedMessageToTopic(
+                        domain.Message(
+                            body.title!!,
+                            body.content!!,
+                            body.topic!!
+                        )
+                    )
                 message.reply(json { bugs })
             } else {
                 message.reply(JsonObject.mapFrom(validationResult))
