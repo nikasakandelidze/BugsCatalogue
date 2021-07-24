@@ -9,14 +9,15 @@ import storage.topics.TopicStorage
 
 class OpenApiMessageAggregatorVerticle(private val topicStorage: TopicStorage) : AbstractVerticle() {
     override fun start(startPromise: Promise<Void>?) {
-        vertx.eventBus().consumer(OpenApiVerticleAddress.questionsAggregator, this::handleMessageFetch)
+        vertx.eventBus().consumer(OpenApiVerticleAddress.topicsAggregator, this::handleTopicFetch)
         super.start(startPromise)
     }
 
-    private fun handleMessageFetch(message: Message<JsonObject>) {
-        val allTopics = topicStorage.getAllTopics()
-            .map { JsonObject.mapFrom(it) }
-            .toCollection(mutableListOf())
-        message.reply(JsonObject().put("items", allTopics))
+    private fun handleTopicFetch(message: Message<JsonObject>) {
+        topicStorage.getAllTopics {
+            val toCollection = it.map { JsonObject.mapFrom(it) }
+                .toCollection(mutableListOf())
+            message.reply(JsonObject().put("items", toCollection))
+        }
     }
 }

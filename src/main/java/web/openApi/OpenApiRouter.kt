@@ -19,34 +19,18 @@ class OpenApiRouter(private val openApiRequestValidator: OpenApiRequestValidator
         val openApiRouter = Router.router(vertx)
         openApiRouter.get("/login")
             .handler(this::handleLoginRequest)
-        openApiRouter.post("/question")
-            .handler { handPostQuestionRequest(it) }
-        openApiRouter.get("/question")
-            .handler { handleFilterQuestionsRequest(it) }
-        openApiRouter.get("/question/:topicId")
+        openApiRouter.get("/topic")
+            .handler { handleFilterTopicsRequest(it) }
+        openApiRouter.post("/question/:topicId")
             .handler { handleFilterQuestionsForTopicRequest(it) }
         return openApiRouter
     }
 
-    private fun handPostQuestionRequest(routingContext: RoutingContext) {
-        val requestBody: JsonObject? = routingContext.bodyAsJson
-        requestBody?.let {
-            val dto = it.mapTo(MessageRequest::class.java)
-            val result = openApiRequestValidator.validateBugsListRequest(dto)
-            if (result.isValid) {
-                vertx.eventBus().request<JsonObject>(
-                    OpenApiVerticleAddress.questionsDispatcher,
-                    JsonObject.mapFrom(dto)
-                ) { handleResponse(it, routingContext) }
-            } else {
-                ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
-            }
-        }
-    }
 
-    private fun handleFilterQuestionsRequest(routingContext: RoutingContext) {
+
+    private fun handleFilterTopicsRequest(routingContext: RoutingContext) {
         vertx.eventBus().request<JsonObject>(
-            OpenApiVerticleAddress.questionsAggregator,
+            OpenApiVerticleAddress.topicsAggregator,
             JsonObject()
         ) { handleResponse(it, routingContext) }
     }
@@ -59,7 +43,7 @@ class OpenApiRouter(private val openApiRequestValidator: OpenApiRequestValidator
             val result = openApiRequestValidator.validateBugsListRequest(dto)
             if (result.isValid) {
                 vertx.eventBus().request<JsonObject>(
-                    OpenApiVerticleAddress.questionsDispatcher,
+                    OpenApiVerticleAddress.topicsDispatcher,
                     JsonObject.mapFrom(dto)
                 ) { handleResponse(it, routingContext) }
             } else {

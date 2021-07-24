@@ -2,35 +2,35 @@ package storage.topics
 
 import domain.Question
 import domain.Topic
+import io.vertx.ext.jdbc.JDBCClient
 
-class TopicStorage : ITopicStorage {
-    private val topics: MutableList<Topic> = mutableListOf(
-        Topic("1", "java", "Topic related to Java and JVM stack/frameworks", mutableListOf()),
-        Topic("2", "javascript", "Topic related to JS", mutableListOf()),
-        Topic("3", "python", "Topic related to python programming", mutableListOf())
-    )
-
-    override fun getAllTopics(): MutableList<Topic> {
-        return topics
+class TopicStorage(val jdbcClient: JDBCClient) : ITopicStorage {
+    override fun getAllTopics(callback: (List<Topic>) -> Unit) {
+        jdbcClient.query("SELECT * from topic") {
+            if (it.succeeded()) {
+                val result = it.result()
+                val listOfTopics = result.results
+                    .map { Topic(it.getInteger(0), it.getString(1), it.getString(2)) }
+                    .toCollection(mutableListOf())
+                callback(listOfTopics)
+            } else {
+                print(it.cause())
+            }
+        }
     }
 
     override fun addNewTopic(topic: Topic) {
-        topics.add(topic)
+
     }
 
     override fun getTopicWithIdOf(id: String): Topic? {
-        return topics.find { it.id == id }
+        return null
     }
 
     override fun getTopicDataWithTopicNameOf(topic: String): List<Topic> {
-        return topics.filter { it.title == topic }
+        return mutableListOf()
     }
 
     override fun addQuestionToTopic(question: Question, topicId: String) {
-        topics
-            .filter { it.id == topicId }
-            .forEach {
-                it.questions?.add(question)
-            }
     }
 }

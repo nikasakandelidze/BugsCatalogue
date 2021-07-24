@@ -1,0 +1,24 @@
+version: '3'
+services:
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    hostname: postgres-server
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata_vl:/var/lib/postgresql/data
+      - ./etc/db/init/db-init-user.sh:/docker-entrypoint-initdb.d/1_db-init-user.sh
+    restart: always
+    ports:
+      - 5433:5432
+    networks:
+      - service_net
+
+networks:
+  service_net:
+
+volumes:
+  pgdata_vl:
