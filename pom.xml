@@ -65,6 +65,11 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.23</version>
         </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-mail-client</artifactId>
+            <version>4.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

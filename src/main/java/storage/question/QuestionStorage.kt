@@ -9,7 +9,7 @@ class QuestionStorage(private val jdbcClient: JDBCClient) : IQuestionStorage {
     val questionInsertPreparedQuery =
         "insert into question(title, content, email, isactive, topic_id) values(?, ?, ?, ? ,?)"
 
-    override fun addNewQuestion(question: Question, topicId: Int) {
+    override fun addNewQuestion(question: Question, topicId: Int, callback: (Unit) -> Unit) {
         jdbcClient.updateWithParams(
             questionInsertPreparedQuery,
             JsonArray().add(question.title)
@@ -18,6 +18,7 @@ class QuestionStorage(private val jdbcClient: JDBCClient) : IQuestionStorage {
                 .add(question.isActive)
                 .add(topicId)
         ) {
+            callback(Unit)
         }
     }
 
