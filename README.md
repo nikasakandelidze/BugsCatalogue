@@ -25,6 +25,6 @@ and dispatches question to and some(some<=count(all)) users who are subscribed a
 You can use this system inside your company, university or any place to decouple people from each others blocking questions, make them more productive and
 have a storage/history of all asked questions that where about: some specific topics from inside of company, culture, some technology or code and etc.
 
-unknower - asks question about some topic knower - is subscribed to a topic and receives questions that were sent to
-this topic
+# Technologies/stacks used
+Java - Vert.x framework, Postgresql, Docker, bash script
 ![post question flow](media/post-question-flow.png)
