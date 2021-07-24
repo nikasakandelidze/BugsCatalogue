@@ -37,19 +37,19 @@ class OpenApiRouter(private val openApiRequestValidator: OpenApiRequestValidator
 
 
     private fun handleFilterQuestionsForTopicRequest(routingContext: RoutingContext) {
-        val requestBody: JsonObject? = routingContext.bodyAsJson
-        requestBody?.let {
-            val dto = it.mapTo(MessageRequest::class.java)
-            val result = openApiRequestValidator.validateBugsListRequest(dto)
-            if (result.isValid) {
-                vertx.eventBus().request<JsonObject>(
-                    OpenApiVerticleAddress.topicsDispatcher,
-                    JsonObject.mapFrom(dto)
-                ) { handleResponse(it, routingContext) }
-            } else {
-                ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
-            }
-        }
+//        val requestBody: JsonObject? = routingContext.bodyAsJson
+//        requestBody?.let {
+//            val dto = it.mapTo(MessageRequest::class.java)
+//            val result = openApiRequestValidator.validateBugsListRequest(dto)
+//            if (result.isValid) {
+//                vertx.eventBus().request<JsonObject>(
+//                    OpenApiVerticleAddress.topicsDispatcher,
+//                    JsonObject.mapFrom(dto)
+//                ) { handleResponse(it, routingContext) }
+//            } else {
+//                ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
+//            }
+//        }
     }
 
     private fun handleLoginRequest(routingContext: RoutingContext) {

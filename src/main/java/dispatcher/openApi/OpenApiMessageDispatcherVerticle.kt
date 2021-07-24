@@ -22,7 +22,6 @@ class OpenApiMessageDispatcherVerticle(
     val logger = LogManager.getLogger(OpenApiMessageDispatcherVerticle::class.java)
 
     override fun start(startPromise: Promise<Void>?) {
-        vertx.eventBus().consumer(OpenApiVerticleAddress.topicsDispatcher, this::handleMessageDispatch)
         super.start(startPromise)
     }
 

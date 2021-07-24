@@ -5,6 +5,7 @@ import io.vertx.core.Promise
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import web.adminApi.AdminApiRouter
+import web.adminApi.validator.AdminInputValidator
 import web.openApi.OpenApiRouter
 import web.openApi.validator.OpenApiRequestValidator
 import web.userApi.UserApiRouter
@@ -27,7 +28,7 @@ class ServerVerticle : AbstractVerticle() {
 
     private fun setupSubRouters() {
         openApiRouter = OpenApiRouter(OpenApiRequestValidator(), vertx)
-        adminApiRouter = AdminApiRouter()
+        adminApiRouter = AdminApiRouter(AdminInputValidator())
         userApiRouter = UserApiRouter()
     }
 
