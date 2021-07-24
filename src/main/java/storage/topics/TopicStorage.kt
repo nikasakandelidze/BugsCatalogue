@@ -27,8 +27,6 @@ class TopicStorage(val jdbcClient: JDBCClient) : ITopicStorage {
             return
         } else {
             jdbcClient.updateWithParams(topicInsertPreparedQuery, JsonArray().add(topic.title).add(topic.description)) {
-                val result = it.result()
-                
             }
         }
     }

@@ -1,17 +1,21 @@
 package web.openApi.validator
 
 import common.validator.ValidationResult
-import web.dto.MessageRequest
+import web.dto.QuestionDispatchRequest
 
 class OpenApiRequestValidator {
-    fun validateBugsListRequest(messageRequest: MessageRequest): ValidationResult {
-        if (messageRequest.content.isNullOrEmpty() || messageRequest.title.isNullOrEmpty() || messageRequest.topicId.isNullOrEmpty() || messageRequest.email.isNullOrEmpty()) {
+    fun validateDistpachNewQuestionRequest(questionDispatchRequest: QuestionDispatchRequest): ValidationResult {
+        if (questionDispatchRequest.content.isNullOrEmpty() || questionDispatchRequest.title.isNullOrEmpty() || questionDispatchRequest.email.isNullOrEmpty()) {
             return ValidationResult(
                 false,
                 mutableSetOf("All fields: [content, title, topicId, email] must be specified.")
             )
         } else {
-            return ValidationResult(true, mutableSetOf())
+            if (questionDispatchRequest.topicId != -1) {
+                return ValidationResult(true, mutableSetOf())
+            } else {
+                return ValidationResult(false, mutableSetOf("TopicId must be numeric"))
+            }
         }
     }
 }

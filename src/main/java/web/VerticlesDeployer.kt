@@ -2,11 +2,12 @@ package web
 
 import dispatcher.adminApi.AdminApiMessageAggregatorVerticle
 import dispatcher.adminApi.validator.TopicDispatchValidator
-import dispatcher.openApi.OpenApiMessageAggregatorVerticle
-import dispatcher.openApi.OpenApiMessageDispatcherVerticle
+import dispatcher.openApi.OpenApiTopicsAggregatorVerticle
+import dispatcher.openApi.OpenApiQuestionDispatcherVerticle
 import dispatcher.openApi.validator.OpenApiMessageValidator
 import io.vertx.core.Vertx
 import storage.dbInitializer.JdbcInitializer
+import storage.question.QuestionStorage
 import storage.topics.TopicStorage
 
 fun main(args: Array<String>) {
@@ -14,7 +15,8 @@ fun main(args: Array<String>) {
     vertx.deployVerticle(ServerVerticle())
     val jdbcClient = JdbcInitializer().init(vertx, 5433, "elarge")
     val topicStorage = TopicStorage(jdbcClient)
-    vertx.deployVerticle(OpenApiMessageDispatcherVerticle(OpenApiMessageValidator(), topicStorage))
-    vertx.deployVerticle(OpenApiMessageAggregatorVerticle(topicStorage))
+    val questionStorage = QuestionStorage(jdbcClient)
+    vertx.deployVerticle(OpenApiQuestionDispatcherVerticle(OpenApiMessageValidator(), topicStorage, questionStorage))
+    vertx.deployVerticle(OpenApiTopicsAggregatorVerticle(topicStorage))
     vertx.deployVerticle(AdminApiMessageAggregatorVerticle(topicStorage, TopicDispatchValidator()))
 }

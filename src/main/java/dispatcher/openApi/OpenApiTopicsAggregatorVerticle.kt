@@ -7,7 +7,7 @@ import io.vertx.core.eventbus.Message
 import io.vertx.core.json.JsonObject
 import storage.topics.TopicStorage
 
-class OpenApiMessageAggregatorVerticle(private val topicStorage: TopicStorage) : AbstractVerticle() {
+class OpenApiTopicsAggregatorVerticle(private val topicStorage: TopicStorage) : AbstractVerticle() {
     override fun start(startPromise: Promise<Void>?) {
         vertx.eventBus().consumer(OpenApiVerticleAddress.topicsAggregator, this::handleTopicFetch)
         super.start(startPromise)

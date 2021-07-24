@@ -1,10 +1,10 @@
 package dispatcher.openApi.validator
 
 import common.validator.ValidationResult
-import web.dto.MessageRequest
+import web.dto.QuestionDispatchRequest
 
 class OpenApiMessageValidator {
-    fun validateOpenApiMessage(message: MessageRequest): ValidationResult {
+    fun validateOpenApiQuestion(questionDispatch: QuestionDispatchRequest): ValidationResult {
         return ValidationResult(true, mutableSetOf())
     }
 }

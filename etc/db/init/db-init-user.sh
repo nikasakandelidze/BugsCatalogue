@@ -38,6 +38,8 @@ create table question(
   id serial constraint question_pk primary key,
   title text ,
   content text not null,
+  email text not null,
+  isActive boolean default true,
   topic_id integer constraint question_topic_id_fk references topic(id)
 );
 

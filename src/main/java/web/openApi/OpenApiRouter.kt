@@ -8,7 +8,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.core.json.json
-import web.dto.MessageRequest
+import web.dto.QuestionDispatchRequest
 import web.openApi.validator.OpenApiRequestValidator
 import web.utils.ResponseUtils
 
@@ -21,11 +21,10 @@ class OpenApiRouter(private val openApiRequestValidator: OpenApiRequestValidator
             .handler(this::handleLoginRequest)
         openApiRouter.get("/topic")
             .handler { handleFilterTopicsRequest(it) }
-        openApiRouter.post("/question/:topicId")
-            .handler { handleFilterQuestionsForTopicRequest(it) }
+        openApiRouter.post("/topic/:topicId/question")
+            .handler { handleDispatchNewQuestionForTopicRequest(it) }
         return openApiRouter
     }
-
 
 
     private fun handleFilterTopicsRequest(routingContext: RoutingContext) {
@@ -36,20 +35,22 @@ class OpenApiRouter(private val openApiRequestValidator: OpenApiRequestValidator
     }
 
 
-    private fun handleFilterQuestionsForTopicRequest(routingContext: RoutingContext) {
-//        val requestBody: JsonObject? = routingContext.bodyAsJson
-//        requestBody?.let {
-//            val dto = it.mapTo(MessageRequest::class.java)
-//            val result = openApiRequestValidator.validateBugsListRequest(dto)
-//            if (result.isValid) {
-//                vertx.eventBus().request<JsonObject>(
-//                    OpenApiVerticleAddress.topicsDispatcher,
-//                    JsonObject.mapFrom(dto)
-//                ) { handleResponse(it, routingContext) }
-//            } else {
-//                ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
-//            }
-//        }
+    private fun handleDispatchNewQuestionForTopicRequest(routingContext: RoutingContext) {
+        val requestBody: JsonObject? = routingContext.bodyAsJson
+        requestBody?.let {
+            val dto = it.mapTo(QuestionDispatchRequest::class.java)
+            val topicId: Int? = routingContext.pathParam("topicId").toIntOrNull()
+            dto.topicId = topicId
+            val result = openApiRequestValidator.validateDistpachNewQuestionRequest(dto)
+            if (result.isValid) {
+                vertx.eventBus().request<JsonObject>(
+                    OpenApiVerticleAddress.questionDispatcher,
+                    JsonObject.mapFrom(dto)
+                ) { handleResponse(it, routingContext) }
+            } else {
+                ResponseUtils.respondWithBadRequest(routingContext.response(), result.messages)
+            }
+        }
     }
 
     private fun handleLoginRequest(routingContext: RoutingContext) {
